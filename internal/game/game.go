@@ -73,13 +73,16 @@ func (service *Service) gameEvents() webroot.RouteMeta {
 				select {
 				case <-r.Context().Done():
 					service.eventLock.Lock()
+					close(service.eventChannelMap[id])
 					delete(service.eventChannelMap, id)
 					service.eventLock.Unlock()
 					f.Flush()
 					break L
-				case event := <-service.eventChannelMap[id]:
-					fmt.Fprintf(w, "event: %s\ndata: %s\n\n", event.EventType, event.Value)
-					f.Flush()
+				case event, ok := <-service.eventChannelMap[id]:
+					if ok {
+						fmt.Fprintf(w, "event: %s\ndata: %s\n\n", event.EventType, event.Value)
+						f.Flush()
+					}
 				default:
 					time.Sleep(10 * time.Millisecond)
 				}

@@ -30,8 +30,9 @@ func main() {
 	)
 
 	server := http.Server{
-		Addr:    "localhost:1234",
-		Handler: rootHandler,
+		Addr:        "localhost:1234",
+		Handler:     rootHandler,
+		IdleTimeout: 30 * time.Second,
 	}
 
 	go func() {
