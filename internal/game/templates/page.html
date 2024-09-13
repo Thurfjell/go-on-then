@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <script src="/static/js/htmx.min.js"></script>
+    <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+    <link rel="stylesheet" href="/static/css/pico.min.css" />
+    <title>Go Go Power Rangers</title>
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <hgroup>
+          <h1>Click or like</h1>
+          <p>Write a loop in your console, why not?</p>
+        </hgroup>
+      </header>
+      <article>{{template "gameDash.html" . }}</article>
+
+      <div>
+        <button hx-post="/click-event" hx-swap="afterend">Click</button>
+        <button hx-post="/like-event" hx-swap="afterend">Like</button>
+      </div>
+    </main>
+  </body>
+</html>

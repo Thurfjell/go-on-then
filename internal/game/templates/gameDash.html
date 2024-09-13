@@ -1,0 +1,13 @@
+<div id="game-dash" hx-ext="sse" sse-connect="/game-events">
+  <div id="clicks">
+    Clicks:
+    <span sse-swap="click">{{.Clicks}}</span>
+  </div>
+
+  <div id="likes">
+    Likes:
+    <span sse-swap="like">{{.Likes}}</span>
+  </div>
+
+  <div id="mood">Mood: <span sse-swap="mood">{{.Mood}}</span></div>
+</div>
