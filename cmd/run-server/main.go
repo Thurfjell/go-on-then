@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"gogopowerrangers/internal/data"
-	"gogopowerrangers/internal/game"
-	"gogopowerrangers/internal/webroot"
+	"goonthen/internal/data"
+	"goonthen/internal/game"
+	"goonthen/internal/webroot"
 	"log"
 	"mime"
 	"net/http"

@@ -1,12 +1,12 @@
 package data
 
 import (
-	"gogopowerrangers/internal/gogopowerrangers"
+	"goonthen/internal/goonthen"
 	"sync"
 )
 
 type state struct {
-	source  *gogopowerrangers.State
+	source  *goonthen.State
 	mapSync sync.RWMutex
 }
 
@@ -29,7 +29,7 @@ func whatsMood(clicks, likes int) string {
 	return mood
 }
 
-func (m *state) Get() *gogopowerrangers.State {
+func (m *state) Get() *goonthen.State {
 	return m.source
 }
 
@@ -53,7 +53,7 @@ func (m *state) Click() {
 
 func NewInMemoryState() *state {
 	return &state{
-		source: &gogopowerrangers.State{
+		source: &goonthen.State{
 			Clicks: 0,
 			Likes:  0,
 			Mood:   sad,

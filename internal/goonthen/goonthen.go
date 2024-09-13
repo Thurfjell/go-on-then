@@ -1,4 +1,4 @@
-package gogopowerrangers
+package goonthen
 
 type State struct {
 	Clicks int

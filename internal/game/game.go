@@ -3,8 +3,8 @@ package game
 import (
 	"embed"
 	"fmt"
-	"gogopowerrangers/internal/gogopowerrangers"
-	"gogopowerrangers/internal/webroot"
+	"goonthen/internal/goonthen"
+	"goonthen/internal/webroot"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -19,7 +19,7 @@ const eventClick string = "click"
 const eventLike string = "like"
 
 type State interface {
-	Get() *gogopowerrangers.State
+	Get() *goonthen.State
 	Like()
 	Click()
 }

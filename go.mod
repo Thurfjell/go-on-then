@@ -1,4 +1,4 @@
-module gogopowerrangers
+module goonthen
 
 go 1.23.0
 
