@@ -3,20 +3,14 @@ package main
 import (
 	"context"
 	"goonthen/internal/data"
-	"goonthen/internal/game"
-	"goonthen/internal/webroot"
+	"goonthen/internal/server"
+	"goonthen/internal/server/game"
 	"log"
-	"mime"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 )
-
-func init() {
-	_ = mime.AddExtensionType(".js", "text/javascript")
-}
 
 func main() {
 	gameService, err := game.NewService(data.NewInMemoryState())
@@ -25,21 +19,14 @@ func main() {
 		log.Panic(err.Error())
 	}
 
-	rootHandler := webroot.New(
-		webroot.WithRouterMeta(gameService.Routes()),
-	)
-
-	server := http.Server{
-		Addr:        "localhost:1234",
-		Handler:     rootHandler,
-		IdleTimeout: 30 * time.Second,
-	}
+	server := server.New(server.WithRoutes(gameService.Routes()))
 
 	go func() {
+		log.Printf("Starting server at %s\n", server.Addr)
+
 		if err := server.ListenAndServe(); err != nil {
-			log.Fatalf("server stopped")
+			log.Fatalln("Oh no server shutdown errored\n", err)
 		}
-		log.Printf("Server running at %s\n", server.Addr)
 	}()
 
 	// Tidy tidy tidy
@@ -50,6 +37,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	log.Println("Stopping server. Bye!")
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("shut down error: %v", err)
 	}

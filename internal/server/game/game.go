@@ -3,8 +3,7 @@ package game
 import (
 	"embed"
 	"fmt"
-	"goonthen/internal/goonthen"
-	"goonthen/internal/webroot"
+	"goonthen/internal/server"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -18,8 +17,14 @@ const eventMood string = "mood"
 const eventClick string = "click"
 const eventLike string = "like"
 
-type State interface {
-	Get() *goonthen.State
+type State struct {
+	Clicks int
+	Likes  int
+	Mood   string
+}
+
+type StateAccess interface {
+	Get() *State
 	Like()
 	Click()
 }
@@ -31,13 +36,13 @@ type event struct {
 
 type Service struct {
 	template        *template.Template
-	state           State
+	state           StateAccess
 	eventChannelMap map[string]chan (event)
 	eventLock       sync.RWMutex
 }
 
-func (service *Service) page() webroot.RouteMeta {
-	return webroot.RouteMeta{
+func (service *Service) page() server.RouteMeta {
+	return server.RouteMeta{
 		Path: "GET /game",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -51,8 +56,8 @@ func (service *Service) page() webroot.RouteMeta {
 	}
 }
 
-func (service *Service) gameEvents() webroot.RouteMeta {
-	return webroot.RouteMeta{
+func (service *Service) gameEvents() server.RouteMeta {
+	return server.RouteMeta{
 		Path: "GET /game-events",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := uuid.NewString()
@@ -92,8 +97,8 @@ func (service *Service) gameEvents() webroot.RouteMeta {
 	}
 }
 
-func (service *Service) clickEvent() webroot.RouteMeta {
-	return webroot.RouteMeta{
+func (service *Service) clickEvent() server.RouteMeta {
+	return server.RouteMeta{
 		Path: "POST /click-event",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			state := service.state.Get()
@@ -120,8 +125,8 @@ func (service *Service) clickEvent() webroot.RouteMeta {
 	}
 }
 
-func (service *Service) likeEvent() webroot.RouteMeta {
-	return webroot.RouteMeta{
+func (service *Service) likeEvent() server.RouteMeta {
+	return server.RouteMeta{
 		Path: "POST /like-event",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			state := service.state.Get()
@@ -147,8 +152,8 @@ func (service *Service) likeEvent() webroot.RouteMeta {
 	}
 }
 
-func (service *Service) Routes() []webroot.RouteMeta {
-	return []webroot.RouteMeta{
+func (service *Service) Routes() []server.RouteMeta {
+	return []server.RouteMeta{
 		service.page(),
 		service.gameEvents(),
 		service.clickEvent(),
@@ -159,7 +164,7 @@ func (service *Service) Routes() []webroot.RouteMeta {
 //go:embed templates/*
 var content embed.FS
 
-func NewService(state State) (*Service, error) {
+func NewService(state StateAccess) (*Service, error) {
 	template, err := template.ParseFS(content, "templates/*.html")
 
 	if err != nil {
